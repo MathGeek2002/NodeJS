@@ -1,0 +1,12 @@
+.goodAnsware{
+    color: greenyellow;
+}
+
+.wrongAnsware{
+    color:  red;
+}
+
+.inlineForm{
+    display: inline-block;
+    padding: 2px;
+}

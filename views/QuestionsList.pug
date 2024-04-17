@@ -1,0 +1,36 @@
+mixin showAnswere(answerDescription, answareValue)
+    -var isGood = answareValue == '1' ? "goodAnsware" : "wrongAnsware";
+    li(class = `${isGood}`) #{answerDescription}
+
+
+mixin showQuestion(question)
+    li Pytanie <br>
+        img(src=`/images/obraz_${question.id}.png`)
+        br
+        div=question.description 
+        ol(type="A")
+            +showAnswere(question.answerDescription1, question.answerValue1)
+            +showAnswere(question.answerDescription2, question.answerValue2)
+            +showAnswere(question.answerDescription3, question.answerValue3)
+        br
+        form(action="/questions/editQuestion" method="post" enctype="multipart/form-data" class="inlineForm")
+            input(type="hidden" id="ID" name="questionID" value=`${question.id}`)
+            button(type="submit") edit
+            
+        form(action="/questions/removeQuestion" method="post" enctype="multipart/form-data" class="inlineForm")
+            input(type="hidden" id="ID" name="questionID" value=`${question.id}`)
+            button(type="submit") remove
+
+
+html 
+    head 
+        title=Questions
+        meta(charset="utf-8")
+        link(rel="stylesheet" href="/style.css")
+
+    body 
+        a(href="http://localhost:8080/logout") logout
+        ol 
+            each question in questions 
+                +showQuestion(question) 
+        
