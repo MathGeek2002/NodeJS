@@ -4,7 +4,6 @@ import formidableMiddleware from 'express-formidable';
 import { ensureLoggedIn } from 'connect-ensure-login';
 import auth from "./auth.js"
 import cookieParser from 'cookie-parser';
-import session from 'express-session';
 
 const port = 8080;
 const app = express();
@@ -15,14 +14,6 @@ app.use(formidableMiddleware({ encoding: 'utf-8', uploadDir: './public'}));
 
 app.set('view engine', 'pug'); 
 app.set('views', './views');
-
-app.use(session(
-  {
-    secret: 'super secret',
-    resave: true,
-    saveUninitialized: true
-  }
-));
 
 app.use(cookieParser('secretCode'));
 
