@@ -1,6 +1,6 @@
 const jsonPath = './questions/question.json';
 const pictureParh = './public/images/obraz_';
-const sqlPath = "./questions/questions.db";
+const sqlPath = "./database.db";
 
 export
 {

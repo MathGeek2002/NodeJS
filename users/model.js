@@ -1,5 +1,5 @@
 import sqlite from 'sqlite3';
-import { sqlPath } from '../questions/consts.js';
+import { sqlPath } from '../consts.js';
 
 const db = new sqlite.Database(sqlPath);
 

@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import {pictureParh, sqlPath} from './consts.js'
+import {pictureParh, sqlPath} from '../consts.js'
 import  sqlite  from 'sqlite3';
 
 const db = new sqlite.Database(sqlPath);
