@@ -1,0 +1,35 @@
+html 
+    head 
+        title=Quiz
+        meta(charset="utf-8")
+        link(rel="stylesheet" href="/style.css")
+
+    body
+        form(action=`/questions/checkQuiz/${questionIndex}` method="post" enctype="multipart/form-data" id="form1" accept-charset="utf-8")
+            img(src=`/images/obraz_${question.id}.png`)
+            br
+            label(for="questionDescription") Pytanie: 
+            div(name='questionDescription', id='questionDescription') #{question.description}
+            ol(type="A")
+                li
+                    p(id="ans1" name="description1") #{question.answerDescription1}
+                    label(for="ans1t") Tak
+                    input(type="radio" id="ans1t" name="answer1" value="1" checked=false)
+                    label(for="ans1f") Nie
+                    input(type="radio" id="ans1f" name="answer1" value="0" checked=true)
+
+                li
+                    p(id="ans2" name="description2") #{question.answerDescription2}
+                    label(for="ans2t") Tak
+                    input(type="radio" id="ans2t" name="answer2" value="1" checked=false)
+                    label(for="ans2f") Nie 
+                    input(type="radio" id="ans2f" name="answer2" value="0" checked=true)
+
+                li
+                    p(id="ans3" name="description3") #{question.answerDescription3}
+                    label(for="ans3t") Tak
+                    input(type="radio" id="ans3t" name="answer3" value="1" checked=false)
+                    label(for="ans3f") Nie
+                    input(type="radio" id="ans3f" name="answer3" value="0" checked=true)
+        
+            input(type="submit")

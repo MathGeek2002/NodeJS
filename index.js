@@ -17,7 +17,7 @@ app.set('views', './views');
 
 app.use(cookieParser('secretCode'));
 
-app.use((req, resp, next) => {req.body = req.fields; next()}, (req, resp, next)=>{ next(); });
+app.use((req, resp, next) => {req.body = req.fields; next()}, (req, resp, next) => { next(); });
 
 auth(app);
 
@@ -26,6 +26,7 @@ app.use('/questions', questionsRouter);
 
 app.get('/', (req, res) => res.redirect('questions'));
 app.get('/new', (req, res) => res.redirect('questions/new'));
+app.get('/quiz', (req, res) => res.redirect('questions/quiz/0'));
 
 app.listen(port, () => {
   console.log(`Server pod adresem http://localhost:${port}`);

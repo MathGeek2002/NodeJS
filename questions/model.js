@@ -39,6 +39,13 @@ export async function getAll()
       });
 }
 
+export async function getQuestionsNumber()
+{
+  const questions = await getAll();
+
+  return questions.length;
+}
+
 export async function get(id) 
 {
     return new Promise((resolve, reject) => {

@@ -10,3 +10,18 @@
     display: inline-block;
     padding: 2px;
 }
+
+div {
+    word-wrap: break-word;
+    width: 400px; 
+    height: 80px;
+}
+
+p { 
+    display: inline;
+    padding-right: 10px;
+}
+
+label {
+    padding-left: 2px;
+}
