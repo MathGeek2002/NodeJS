@@ -1,5 +1,6 @@
 import express from 'express';
-import { router as questionsRouter } from './questions/index.js'
+import { privateRouter as questionsPrivate } from './questions/index.js'
+import { publicRouter as questionsPublic } from './questions/index.js'
 import formidableMiddleware from 'express-formidable';
 import { ensureLoggedIn } from 'connect-ensure-login';
 import auth from "./auth.js"
@@ -21,12 +22,14 @@ app.use((req, resp, next) => {req.body = req.fields; next()}, (req, resp, next) 
 
 auth(app);
 
-app.use('/', ensureLoggedIn('/login.html'), questionsRouter);
-app.use('/questions', questionsRouter);
+app.use('/', questionsPublic);
+app.use('/questions', ensureLoggedIn('/login'), questionsPrivate);
+app.use('/questionsPublic', questionsPublic);
 
-app.get('/', (req, res) => res.redirect('questions'));
+app.get('/', (req, res) => res.redirect('questionsPublic/quiz/0'));
+app.get('/showAll', (req, res) => res.redirect('questions'));
 app.get('/new', (req, res) => res.redirect('questions/new'));
-app.get('/quiz', (req, res) => res.redirect('questions/quiz/0'));
+app.get('/quiz', (req, res) => res.redirect('questionsPublic/quiz/0'));
 
 app.listen(port, () => {
   console.log(`Server pod adresem http://localhost:${port}`);

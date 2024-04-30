@@ -69,7 +69,6 @@ export async function checkAnswere(req, res, question)
     var thirdCorrect = question.answerValue3 === answreValue3;   
 
     var correctAnswere = firstCorrect && secondCorrect && thirdCorrect;
-    console.log(`Answere is corect = ${correctAnswere}`);
 
     if(correctAnswere)
     {

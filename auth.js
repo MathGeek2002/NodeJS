@@ -49,12 +49,14 @@ export default function (app)
   app.use(passport.initialize());
   app.use(passport.session());
 
+  app.get('/login', function(req, res) 
+  {
+    res.render('Login');
+  });
+
   app.post(
     '/login',
-    passport.authenticate('local', { failureRedirect: '/login.html' }),
-    (request, response) => {
-      response.redirect('/');
-    },
+    passport.authenticate('local', { successReturnToOrRedirect: '/showAll', failureRedirect: '/login.html', keepSessionInfo: true })
   );
 
   app.get('/logout', (request, response, next) => {

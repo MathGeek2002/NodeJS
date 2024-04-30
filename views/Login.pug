@@ -1,0 +1,17 @@
+html 
+    head 
+        title=Login
+        meta(charset="utf-8")
+
+    body
+        form(action="/login" method="post" id="login")
+            div
+                h1 Zaloguj się:
+                div
+                label(for="username") Nazwa użytkownika: 
+                input(type="text" name="username" id="username" autofocus=true) 
+                div
+                label(for="password") Hasło: 
+                input(type="password" name="password" id="password")
+                br
+            button(type="submit") Zatwierdź

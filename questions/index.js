@@ -2,11 +2,12 @@ import { Router } from "express";
 import { showAllQuestions, saveQuestionAsync, showQuizQuestion, showQuizResults, checkAnswere, beginQuiz } from "./controller.js";
 import { removeQuestion, get, getAll } from "./model.js";
 
-const router = Router();
+const privateRouter = Router();
+const publicRouter = Router();
 
-router.get('/', async (req, res) => showAllQuestions(res));
+privateRouter.get('/', async (req, res) => showAllQuestions(res));
 
-router.get('/new', async (req, res) => { 
+privateRouter.get('/new', async (req, res) => { 
     
     var newQuestion = {
         id: undefined,
@@ -21,20 +22,20 @@ router.get('/new', async (req, res) => {
     res.render('QuestionForm', {question: newQuestion});
 });
 
-router.post('/fileupload', async (req, res) => {
+privateRouter.post('/fileupload', async (req, res) => {
 
     await saveQuestionAsync(req, res);
     
     res.redirect('/');
 });
 
-router.post('/editQuestion', async (req, res) => {
+privateRouter.post('/editQuestion', async (req, res) => {
 
     var question = await get(req.fields.questionID);
     res.render('QuestionForm', {question: question});
 });
 
-router.post('/removeQuestion', async (req, res) => {
+privateRouter.post('/removeQuestion', async (req, res) => {
 
     removeQuestion(req.fields, req.files);
 
@@ -45,7 +46,7 @@ router.post('/removeQuestion', async (req, res) => {
     res.redirect('/');
 });
 
-router.get('/quiz/:questionIndex', async (req, res) => {
+publicRouter.get('/quiz/:questionIndex', async (req, res) => {
     
     var questionIndex = req.params.questionIndex;
 
@@ -67,7 +68,7 @@ router.get('/quiz/:questionIndex', async (req, res) => {
     }
 });
 
-router.post('/checkQuiz/:questionIndex', async (req, res) => {
+publicRouter.post('/checkQuiz/:questionIndex', async (req, res) => {
     
     const questions = await getAll();
     var questionIndex = parseInt(req.params.questionIndex);
@@ -76,7 +77,7 @@ router.post('/checkQuiz/:questionIndex', async (req, res) => {
     checkAnswere(req, res, question);
     
     var nextQuestionIndex = questionIndex + 1;
-    res.redirect(`/questions/quiz/${nextQuestionIndex}`);
+    res.redirect(`/questionsPublic/quiz/${nextQuestionIndex}`);
 });
 
-export { router };
+export { privateRouter, publicRouter };
