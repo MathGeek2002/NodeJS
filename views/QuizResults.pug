@@ -2,8 +2,8 @@ html
     head 
         title=QuizResults
         meta(charset="utf-8")
-        link(rel="stylesheet" href="/style.css")
-        link(rel="stylesheet" href="/circle.css")
+        link(rel="stylesheet" href="/css/style.css")
+        link(rel="stylesheet" href="/css/circle.css")
 
     body
         p(id="results" name="results") Your scores: #{result} / #{questionsNumber}
@@ -13,7 +13,7 @@ html
             div(class="slice")
                 div(class="bar")
                 div(class="fill")
-                
+
         br
         form(method="get" action=`/questionsPublic/quiz/${0}`)
             button(type="submit") Spróbuj ponownie
