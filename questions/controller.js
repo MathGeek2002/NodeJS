@@ -53,9 +53,10 @@ export async function showQuizResults(req, res)
 {
     var questionsNumber = await getQuestionsNumber();
     var result = parseInt(req.cookies.quizResultCookie, 0);
-    
-    console.log(`quiz results = ${result} / ${questionsNumber}`);
-    res.render('QuizResults', {result: result, questionsNumber: questionsNumber});
+    var percentage = Math.floor(result * 100 / questionsNumber); 
+
+    console.log(`quiz results = ${percentage}%`);
+    res.render('QuizResults', {result: result, questionsNumber: questionsNumber, percentage: percentage});
 }
 
 export async function checkAnswere(req, res, question)

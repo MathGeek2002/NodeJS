@@ -14,6 +14,7 @@
     "connect-ensure-login": "^0.1.1",
     "cookie-parser": "^1.4.6",
     "crypto": "^1.0.1",
+    "css-percentage-circle": "^2.0.1",
     "express": "^4.19.2",
     "express-formidable": "^1.2.0",
     "express-session": "^1.18.0",

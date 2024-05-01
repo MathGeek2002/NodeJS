@@ -3,9 +3,17 @@ html
         title=QuizResults
         meta(charset="utf-8")
         link(rel="stylesheet" href="/style.css")
+        link(rel="stylesheet" href="/circle.css")
 
     body
         p(id="results" name="results") Your scores: #{result} / #{questionsNumber}
         
+        div(class=`c100 p${percentage} big`)
+            span #{percentage}%
+            div(class="slice")
+                div(class="bar")
+                div(class="fill")
+                
+        br
         form(method="get" action=`/questionsPublic/quiz/${0}`)
             button(type="submit") Spróbuj ponownie
