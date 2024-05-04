@@ -28,6 +28,7 @@ app.use('/questionsPublic', questionsPublic);
 
 app.get('/', (req, res) => res.redirect('questionsPublic/quiz/0'));
 app.get('/showAll', (req, res) => res.redirect('questions'));
+app.get('/edit', (req, res) => res.redirect('questions'));
 app.get('/new', (req, res) => res.redirect('questions/new'));
 app.get('/quiz', (req, res) => res.redirect('questionsPublic/quiz/0'));
 
