@@ -36,7 +36,7 @@ export async function saveQuestionAsync(req, res)
         res.cookie(`Edited ${questionId}`, `Question with id ${questionId} was changed by user with id: ${userId}`);
     }
 
-    await savePicture(req.fields, req.files, questionId); 
+    await savePicture(req.fields, req.files, questionId);
 }
 
 export async function beginQuiz(res)

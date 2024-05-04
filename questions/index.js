@@ -26,7 +26,7 @@ privateRouter.post('/fileupload', async (req, res) => {
 
     await saveQuestionAsync(req, res);
     
-    res.redirect('/');
+    res.redirect('/showAll');
 });
 
 privateRouter.post('/editQuestion', async (req, res) => {
@@ -43,7 +43,7 @@ privateRouter.post('/removeQuestion', async (req, res) => {
     var userId = req.user.id;
     res.cookie(`Deleted ${questionId}`, `Question with id: ${questionId} deleted by user with id: ${userId}`);
 
-    res.redirect('/');
+    res.redirect('/showAll');
 });
 
 publicRouter.get('/quiz/:questionIndex', async (req, res) => {
