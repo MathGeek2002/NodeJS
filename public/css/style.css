@@ -16,7 +16,8 @@
 div {
     word-wrap: break-word;
     width: 400px; 
-    height: 80px;
+    height: 50px;
+    font-weight:bold;
 }
 
 p { 
