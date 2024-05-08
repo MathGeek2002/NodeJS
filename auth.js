@@ -56,7 +56,7 @@ export default function (app)
 
   app.post(
     '/login',
-    passport.authenticate('local', { successReturnToOrRedirect: '/showAll', failureRedirect: '/login.html', keepSessionInfo: true })
+    passport.authenticate('local', { successReturnToOrRedirect: '/showAll', failureRedirect: '/login', keepSessionInfo: true })
   );
 
   app.get('/logout', (request, response, next) => {

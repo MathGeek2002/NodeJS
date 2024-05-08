@@ -20,6 +20,7 @@
     "express-session": "^1.18.0",
     "expressive": "^1.0.4",
     "formidable": "^1.2.1",
+    "mongodb": "^6.6.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pug": "^3.0.2",

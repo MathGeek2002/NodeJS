@@ -1,42 +1,46 @@
 import * as fs from 'fs';
 import {pictureParh, sqlPath} from '../consts.js'
-import  sqlite  from 'sqlite3';
+import {  MongoClient } from 'mongodb';
+import { query } from 'express';
 
-const db = new sqlite.Database(sqlPath);
+let collection = null;
 
-export async function getLastId() {
-    return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM questions WHERE id = (SELECT MAX(id) FROM questions)';
-      db.get(query, (error, results) => 
-      {
-        if (error) 
-        {
-          reject(error);
-        } 
-        else 
-        {
-          resolve(results);
-        }
-      });
-    });
+async function connect() 
+{
+  if (collection) 
+  {
+    return collection;
   }
+  const client = new MongoClient('mongodb://localhost:27017');
+
+  await client.connect();
+
+  const db = client.db('DataBase');
+  collection = db.collection('questions');
+
+  return collection;
+}
+
+export async function getLastId() 
+{
+  var lastId = 0;
+  const collection = await connect();
+  var questions = await collection.find({}).sort( {"id": -1} ).toArray();
+
+  if(questions.length > 0)
+  {
+    lastId = questions[0].id;
+  }
+
+  return lastId;
+}
 
 export async function getAll()
 {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM questions';
-        db.all(query, (error, results) => {
-            if (error) 
-            {
-                console.log("Error: ", error);
-                reject(error);
-            }
-            else 
-            {
-                resolve(results);
-            }
-        });
-      });
+  const collection = await connect();
+  const docs = await collection.find({});
+
+  return docs.toArray();
 }
 
 export async function getQuestionsNumber()
@@ -46,28 +50,32 @@ export async function getQuestionsNumber()
   return questions.length;
 }
 
-export async function get(id) 
+export async function get(uid) 
 {
-    return new Promise((resolve, reject) => {
-      const query = 'SELECT * FROM questions WHERE id = ?';
-      db.get(query, [id], (error, results) => {
-        if (error) 
-        {
-            console.log("Error: ", error);
-            reject(error);
-        } 
-        else 
-        {
-          resolve(results);
-        }
-      });
-    });
-}
+  var question = null;
+  const collection = await connect();
+  
+  var query = {"id": parseInt(uid)};
+  try
+  {
+    var questions = await collection.find(query).toArray();
 
+    if(questions.length > 0)
+    {
+      question = questions[0];
+    }
+  }
+  catch(error)
+  {
+    throw error;
+  }
+  
+  return question;
+}
 
 export async function removeQuestion(fields, files)
 {
-    remove(fields.questionID);
+    await remove(fields.questionID);
 
     fs.unlink(pictureParh + fields.questionID + '.png', function(error){
       if(error) 
@@ -82,19 +90,10 @@ export async function removeQuestion(fields, files)
 
 async function remove(id) 
 {
-  return new Promise((resolve, reject) => {
-        const query = 'DELETE FROM questions WHERE id = ?';
-        db.run(query, [id], (error, results) => {
-        if (error)
-        {
-            reject(error);
-        } 
-        else 
-        {
-            resolve(results);
-        }
-    });
-  });
+  const collection = await connect();
+  var query = {"id": parseInt(id)};
+
+  await collection.deleteOne(query);
 }
 
 export async function savePicture(fields, files, id)
@@ -118,6 +117,7 @@ export async function save(question)
 {
     if (!question.id) 
     {
+      question.id = await getLastId() + 1;
       insert(question);
     }
     else 
@@ -130,58 +130,17 @@ export async function save(question)
 
 async function insert(question) 
 {
-  return new Promise((resolve, reject) => {
+  const collection = await connect();
+  const data = collection.insertOne(question);
 
-      var columns = 'description, ';
-      columns += 'answerDescription1, answerValue1, ';
-      columns += 'answerDescription2, answerValue2, '; 
-      columns += 'answerDescription3, answerValue3';
-      
-      const query = `INSERT INTO questions (${columns}) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-
-      db.run(query, [
-                      question.description, 
-                      question.answreDescription1, question.answreValue1, 
-                      question.answreDescription2, question.answreValue2, 
-                      question.answreDescription3, question.answreValue3
-                    ], function (error, results) {
-                      if (error) 
-                      {
-                          reject(error);
-                      } 
-                      else 
-                      {
-                          resolve(results);
-                      }
-                  });
-  });
+  return data;
 }
 
 async function update(question) 
 {
-    return new Promise((resolve, reject) => {
-      const query = 'UPDATE questions SET description = ?, \
-                    answerDescription1 = ?, answerValue1 = ?, \
-                    answerDescription2 = ?, answerValue2 = ?, \
-                    answerDescription3 = ?, answerValue3 = ? \
-                    WHERE id = ? \
-                    ';
+  const collection = await connect();
+  var query = { "id": parseInt(question.id) };
+  var updatedQuestion = await collection.updateOne(query, { $set: question });
 
-      db.run(query, [
-                    question.description, 
-                    question.answreDescription1, question.answreValue1, 
-                    question.answreDescription2, question.answreValue2, 
-                    question.answreDescription3, question.answreValue3,
-                    question.id
-                  ], (error, results) => {
-                      if (error) 
-                      {
-                        reject(error);
-                      } 
-                      else 
-                      {
-                        resolve(results);
-                      }
-                 });
-    });
+  return updatedQuestion;
 }

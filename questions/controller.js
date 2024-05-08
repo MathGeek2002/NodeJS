@@ -1,5 +1,5 @@
 import { quizResultCookie } from "../consts.js";
-import { getAll, save, savePicture, getLastId as getLastQuestion, getQuestionsNumber } from "./model.js";
+import { getAll, save, savePicture, getLastId, getQuestionsNumber } from "./model.js";
 
 export async function showAllQuestions(res)
 {
@@ -14,12 +14,12 @@ export async function saveQuestionAsync(req, res)
     const question = {
         id: questionId,
         description: req.fields.question,
-        answreDescription1: req.fields.description1,
-        answreValue1: req.fields.answer1,
-        answreDescription2: req.fields.description2,
-        answreValue2: req.fields.answer2,
-        answreDescription3: req.fields.description3,
-        answreValue3: req.fields.answer3
+        answerDescription1: req.fields.description1,
+        answerValue1: req.fields.answer1,
+        answerDescription2: req.fields.description2,
+        answerValue2: req.fields.answer2,
+        answerDescription3: req.fields.description3,
+        answerValue3: req.fields.answer3
     };
 
     await save(question);
@@ -27,8 +27,7 @@ export async function saveQuestionAsync(req, res)
     var userId = req.user.id;
     if(!questionId)
     {
-        var newQuestion = await getLastQuestion();
-        questionId = newQuestion.id;
+        questionId = await getLastId();
         res.cookie(`Created ${questionId}`, `Question with id ${questionId} was created by user with id: ${userId}`);
     }
     else
