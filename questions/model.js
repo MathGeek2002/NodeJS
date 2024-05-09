@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { pictureParh } from '../consts.js'
+import { mongodbDataBaseName, pictureParh } from '../consts.js'
 import {  MongoClient } from 'mongodb';
 
 let collection = null;
@@ -14,7 +14,7 @@ async function connect()
 
   await client.connect();
 
-  const db = client.db('DataBase');
+  const db = client.db(mongodbDataBaseName);
   collection = db.collection('questions');
 
   return collection;

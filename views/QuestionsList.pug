@@ -33,4 +33,7 @@ html
         ol 
             each question in questions 
                 +showQuestion(question) 
+
+        form(action="/questions/new" method="get" enctype="multipart/form-data" class="inlineForm")
+            button(type="submit") Dodaj nowe pytanie
         
