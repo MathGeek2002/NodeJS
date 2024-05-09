@@ -37,7 +37,7 @@ privateRouter.post('/editQuestion', async (req, res) => {
 
 privateRouter.post('/removeQuestion', async (req, res) => {
 
-    removeQuestion(req.fields, req.files);
+    await removeQuestion(req.fields, req.files);
 
     var questionId = req.fields.questionID;
     var userId = req.user.id;

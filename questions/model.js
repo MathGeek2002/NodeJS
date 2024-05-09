@@ -1,7 +1,6 @@
 import * as fs from 'fs';
-import {pictureParh, sqlPath} from '../consts.js'
+import { pictureParh } from '../consts.js'
 import {  MongoClient } from 'mongodb';
-import { query } from 'express';
 
 let collection = null;
 
@@ -77,7 +76,7 @@ export async function removeQuestion(fields, files)
 {
     await remove(fields.questionID);
 
-    fs.unlink(pictureParh + fields.questionID + '.png', function(error){
+    fs.unlink(pictureParh + fields.questionID + '.png', function(error) {
       if(error) 
       {
           console.log("Error during file removeing: " + error);
@@ -118,11 +117,11 @@ export async function save(question)
     if (!question.id) 
     {
       question.id = await getLastId() + 1;
-      insert(question);
+      question = await insert(question);
     }
     else 
     {
-      update(question);
+      question = await update(question);
     }
 
     return question;

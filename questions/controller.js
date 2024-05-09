@@ -54,7 +54,6 @@ export async function showQuizResults(req, res)
     var result = parseInt(req.cookies.quizResultCookie, 0);
     var percentage = Math.floor(result * 100 / questionsNumber); 
 
-    console.log(`quiz results = ${percentage}%`);
     res.render('QuizResults', {result: result, questionsNumber: questionsNumber, percentage: percentage});
 }
 
