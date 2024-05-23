@@ -5,7 +5,7 @@ mixin showAnswere(answerDescription, answareValue)
 
 mixin showQuestion(question)
     li Pytanie <br>
-        img(src=`/images/obraz_${question.id}.png`)
+        img(src=`${question.picture}`, id=`image_${question.id}`)
         br
         div=question.description 
         ol(type="A")
@@ -13,13 +13,9 @@ mixin showQuestion(question)
             +showAnswere(question.answerDescription2, question.answerValue2)
             +showAnswere(question.answerDescription3, question.answerValue3)
         br
-        form(action="/questions/editQuestion" method="post" enctype="multipart/form-data" class="inlineForm")
-            input(type="hidden" id="ID" name="questionID" value=`${question.id}`)
-            button(type="submit") edit
+        button(onClick=`ChangeFormVisibility('fromDiv', ${question.id})` class="optionButton") edit
             
-        form(action="/questions/removeQuestion" method="post" enctype="multipart/form-data" class="inlineForm")
-            input(type="hidden" id="ID" name="questionID" value=`${question.id}`)
-            button(type="submit") remove
+        button(onClick=`RemoveQuestion(${question.id})` class="optionButton") remove
 
 
 html 
@@ -27,6 +23,7 @@ html
         title=Questions
         meta(charset="utf-8")
         link(rel="stylesheet" href="/css/style.css")
+        script(src="/js/AddNewQuestionLogic.js")
 
     body 
         a(href="http://localhost:8080/logout") logout
@@ -34,6 +31,40 @@ html
             each question in questions 
                 +showQuestion(question) 
 
-        form(action="/questions/new" method="get" enctype="multipart/form-data" class="inlineForm")
-            button(type="submit") Dodaj nowe pytanie
+        button(onClick="ChangeFormVisibility('fromDiv', undefined)") Dodaj nowe
+
+        div(class="centeredForm", id="fromDiv")
+            form(method="put" enctype="multipart/form-data" id="form1" accept-charset="utf-8")
+                button(onClick="ChangeFormVisibility('fromDiv', undefined)", class="closeButton") x
+                img(id="formQuestionImage" src="" class="questionImage")
+                br
+                label(for="filetoupload") Zdjecie: <br>
+                input(type="file" name="filetoupload" id="filetoupload" accept=".png" required) 
+                br
+                label(for="Question") Pytatnie: <br>
+                textarea(name="question" id="question" rows="4" cols="80" form="form1") Opis pytania
+                ol(type="A")
+                    li
+                        input(type="text" id="ans1" name="description1" size="70" required)
+                        label(for="ans1t") Tak
+                        input(type="radio" id="ans1t" name="answer1" value="1")
+                        label(for="ans1f") Nie
+                        input(type="radio" id="ans1f" name="answer1" value="0")
+
+                    li
+                        input(type="text" id="ans2" name="description2" size="70" required)
+                        label(for="ans2t") Tak
+                        input(type="radio" id="ans2t" name="answer2" value="1")
+                        label(for="ans2f") Nie 
+                        input(type="radio" id="ans2f" name="answer2" value="0")
+
+                    li
+                        input(type="text" id="ans3" name="description3" size="70" required)
+                        label(for="ans3t") Tak
+                        input(type="radio" id="ans3t" name="answer3" value="1")
+                        label(for="ans3f") Nie
+                        input(type="radio" id="ans3f" name="answer3" value="0")
+
+            button(onClick="ProcessData()") Submit
+
         

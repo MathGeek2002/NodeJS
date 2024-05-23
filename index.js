@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 const port = 8080;
 const app = express();
 
+
 app.use('/', express.static('public'));
 app.use('/images', express.static('public/images'));
 app.use(formidableMiddleware({ encoding: 'utf-8', uploadDir: './public'}));
@@ -23,13 +24,11 @@ app.use((req, resp, next) => {req.body = req.fields; next()}, (req, resp, next) 
 auth(app);
 
 app.use('/', questionsPublic);
-app.use('/questions', ensureLoggedIn('/login'), questionsPrivate);
+app.use('/questions', ensureLoggedIn("/login"), questionsPrivate);
 app.use('/questionsPublic', questionsPublic);
 
 app.get('/', (req, res) => res.redirect('questionsPublic/quiz/0'));
 app.get('/showAll', (req, res) => res.redirect('questions'));
-app.get('/edit', (req, res) => res.redirect('questions'));
-app.get('/new', (req, res) => res.redirect('questions/new'));
 app.get('/quiz', (req, res) => res.redirect('questionsPublic/quiz/0'));
 
 app.listen(port, () => {

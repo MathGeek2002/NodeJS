@@ -1,5 +1,5 @@
 import { quizResultCookie } from "../consts.js";
-import { getAll, save, savePicture, getLastId, getQuestionsNumber } from "./model.js";
+import { getAll, save, getQuestionsNumber, remove } from "./model.js";
 
 export async function showAllQuestions(res)
 {
@@ -7,35 +7,20 @@ export async function showAllQuestions(res)
     res.render('QuestionsList', {questions: questions});
 }
 
-export async function saveQuestionAsync(req, res)
+export async function saveQuestionAsync(question)
 {
-    var questionId = parseInt(req.fields.id);
-
-    const question = {
-        id: questionId,
-        description: req.fields.question,
-        answerDescription1: req.fields.description1,
-        answerValue1: req.fields.answer1,
-        answerDescription2: req.fields.description2,
-        answerValue2: req.fields.answer2,
-        answerDescription3: req.fields.description3,
-        answerValue3: req.fields.answer3
-    };
-
     await save(question);
+}
+
+export async function removeQuestion(req, res)
+{
+    var questionId = parseInt(req.body.id);
+    await remove(questionId);
 
     var userId = req.user.id;
-    if(!questionId)
-    {
-        questionId = await getLastId();
-        res.cookie(`Created ${questionId}`, `Question with id ${questionId} was created by user with id: ${userId}`);
-    }
-    else
-    {
-        res.cookie(`Edited ${questionId}`, `Question with id ${questionId} was changed by user with id: ${userId}`);
-    }
+    res.cookie(`Deleted ${questionId}`, `Question with id: ${questionId} deleted by user with id: ${userId}`);
 
-    await savePicture(req.fields, req.files, questionId);
+    res.status(200).send('sucessfuly removed');
 }
 
 export async function beginQuiz(res)
@@ -54,6 +39,7 @@ export async function showQuizResults(req, res)
     var result = parseInt(req.cookies.quizResultCookie, 0);
     var percentage = Math.floor(result * 100 / questionsNumber); 
 
+    console.log(`quiz results = ${percentage}%`);
     res.render('QuizResults', {result: result, questionsNumber: questionsNumber, percentage: percentage});
 }
 

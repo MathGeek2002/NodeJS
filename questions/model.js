@@ -1,45 +1,41 @@
-import * as fs from 'fs';
-import { mongodbDataBaseName, pictureParh } from '../consts.js'
-import {  MongoClient } from 'mongodb';
+import {pictureParh, sqlPath} from '../consts.js'
+import  sqlite  from 'sqlite3';
 
-let collection = null;
+const db = new sqlite.Database(sqlPath);
 
-async function connect() 
-{
-  if (collection) 
-  {
-    return collection;
+export async function getLastId() {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM questions WHERE id = (SELECT MAX(id) FROM questions)';
+      db.get(query, (error, results) => 
+      {
+        if (error) 
+        {
+          reject(error);
+        } 
+        else 
+        {
+          resolve(results);
+        }
+      });
+    });
   }
-  const client = new MongoClient('mongodb://localhost:27017');
-
-  await client.connect();
-
-  const db = client.db(mongodbDataBaseName);
-  collection = db.collection('questions');
-
-  return collection;
-}
-
-export async function getLastId() 
-{
-  var lastId = 0;
-  const collection = await connect();
-  var questions = await collection.find({}).sort( {"id": -1} ).toArray();
-
-  if(questions.length > 0)
-  {
-    lastId = questions[0].id;
-  }
-
-  return lastId;
-}
 
 export async function getAll()
 {
-  const collection = await connect();
-  const docs = await collection.find({});
-
-  return docs.toArray();
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM questions';
+        db.all(query, (error, results) => {
+            if (error) 
+            {
+                console.log("Error: ", error);
+                reject(error);
+            }
+            else 
+            {
+                resolve(results);
+            }
+        });
+      });
 }
 
 export async function getQuestionsNumber()
@@ -49,79 +45,50 @@ export async function getQuestionsNumber()
   return questions.length;
 }
 
-export async function get(uid) 
+export async function get(id) 
 {
-  var question = null;
-  const collection = await connect();
-  
-  var query = {"id": parseInt(uid)};
-  try
-  {
-    var questions = await collection.find(query).toArray();
-
-    if(questions.length > 0)
-    {
-      question = questions[0];
-    }
-  }
-  catch(error)
-  {
-    throw error;
-  }
-  
-  return question;
-}
-
-export async function removeQuestion(fields, files)
-{
-    await remove(fields.questionID);
-
-    fs.unlink(pictureParh + fields.questionID + '.png', function(error) {
-      if(error) 
-      {
-          console.log("Error during file removeing: " + error);
-          throw error;
-      }
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM questions WHERE id = ?';
+      db.get(query, [id], (error, results) => {
+        if (error) 
+        {
+            console.log("Error: ", error);
+            reject(error);
+        } 
+        else 
+        {
+          resolve(results);
+        }
+      });
     });
-
-    console.log(`Question with id ${fields.questionID} deleted successfully`);
 }
 
-async function remove(id) 
+export async function remove(id) 
 {
-  const collection = await connect();
-  var query = {"id": parseInt(id)};
-
-  await collection.deleteOne(query);
-}
-
-export async function savePicture(fields, files, id)
-{
-    var oldpath = files.filetoupload.path;
-    var newpath = pictureParh + id + '.png';
-    
-    fs.rename(oldpath, newpath, function (error) 
-    {  
-      if (error) 
-      {
-        console.log(`Error during file saveing: ${error}`);
-        throw error;
-      }
+  return new Promise((resolve, reject) => {
+        const query = 'DELETE FROM questions WHERE id = ?';
+        db.run(query, [id], (error, results) => {
+        if (error)
+        {
+            reject(error);
+        } 
+        else 
+        {
+            resolve(results);
+        }
     });
-    
-    console.log(`Picture saved successfully at path: ${newpath}`);
-};
+  });
+}
 
 export async function save(question)
 {
     if (!question.id) 
     {
-      question.id = await getLastId() + 1;
-      question = await insert(question);
+      insert(question);
     }
     else 
     {
-      question = await update(question);
+      update(question);
     }
 
     return question;
@@ -129,17 +96,62 @@ export async function save(question)
 
 async function insert(question) 
 {
-  const collection = await connect();
-  const data = collection.insertOne(question);
+  return new Promise((resolve, reject) => {
 
-  return data;
+      var columns = 'description, ';
+      columns += 'answerDescription1, answerValue1, ';
+      columns += 'answerDescription2, answerValue2, '; 
+      columns += 'answerDescription3, answerValue3, ';
+      columns += "picture";
+      
+      const query = `INSERT INTO questions (${columns}) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+      db.run(query, [
+                      question.description, 
+                      question.answerDescription1, question.answerValue1, 
+                      question.answerDescription2, question.answerValue2, 
+                      question.answerDescription3, question.answerValue3,
+                      question.picture
+                    ], function (error, results) {
+                      if (error) 
+                      {
+                          reject(error);
+                      } 
+                      else 
+                      {
+                          resolve(results);
+                      }
+                  });
+  });
 }
 
 async function update(question) 
 {
-  const collection = await connect();
-  var query = { "id": parseInt(question.id) };
-  var updatedQuestion = await collection.updateOne(query, { $set: question });
+    return new Promise((resolve, reject) => {
+      const query = 'UPDATE questions SET description = ?, \
+                    answerDescription1 = ?, answerValue1 = ?, \
+                    answerDescription2 = ?, answerValue2 = ?, \
+                    answerDescription3 = ?, answerValue3 = ?, \
+                    picture = ? \
+                    WHERE id = ? \
+                    ';
 
-  return updatedQuestion;
+      db.run(query, [
+                    question.description, 
+                    question.answerDescription1, question.answerValue1, 
+                    question.answerDescription2, question.answerValue2, 
+                    question.answerDescription3, question.answerValue3,
+                    question.picture,
+                    question.id
+                  ], (error, results) => {
+                      if (error) 
+                      {
+                        reject(error);
+                      } 
+                      else 
+                      {
+                        resolve(results);
+                      }
+                 });
+    });
 }

@@ -1,32 +1,30 @@
 import { Router } from "express";
-import { showAllQuestions, saveQuestionAsync, showQuizQuestion, showQuizResults, checkAnswere, beginQuiz } from "./controller.js";
-import { removeQuestion, get, getAll } from "./model.js";
+import { showAllQuestions, saveQuestionAsync, showQuizQuestion, showQuizResults, checkAnswere, beginQuiz, removeQuestion } from "./controller.js";
+import { get, getAll } from "./model.js";
 
 const privateRouter = Router();
 const publicRouter = Router();
 
 privateRouter.get('/', async (req, res) => showAllQuestions(res));
 
-privateRouter.get('/new', async (req, res) => { 
-    
-    var newQuestion = {
-        id: undefined,
-        description: '',
-        answerDescription1: '',
-        answerValue1: '0',
-        answerDescription2: '',
-        answerValue2: '0',
-        answerDescription3: '',
-        answerValue3: '0'
-    };
-    res.render('QuestionForm', {question: newQuestion});
+privateRouter.post('/registerQuestion', async(req, res) => {
+
+    var newQuenstion = req.body;
+
+    await saveQuestionAsync(newQuenstion);
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(newQuenstion);
 });
 
-privateRouter.post('/fileupload', async (req, res) => {
+privateRouter.post('/findQuestion', async(req, res) => {
 
-    await saveQuestionAsync(req, res);
-    
-    res.redirect('/showAll');
+    var questionId = req.body.id;
+
+    var question = await get(questionId);
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(question);
 });
 
 privateRouter.post('/editQuestion', async (req, res) => {
@@ -35,15 +33,9 @@ privateRouter.post('/editQuestion', async (req, res) => {
     res.render('QuestionForm', {question: question});
 });
 
-privateRouter.post('/removeQuestion', async (req, res) => {
+privateRouter.delete('/removeQuestion', async (req, res) => {
 
-    await removeQuestion(req.fields, req.files);
-
-    var questionId = req.fields.questionID;
-    var userId = req.user.id;
-    res.cookie(`Deleted ${questionId}`, `Question with id: ${questionId} deleted by user with id: ${userId}`);
-
-    res.redirect('/showAll');
+    await removeQuestion(req, res);
 });
 
 publicRouter.get('/quiz/:questionIndex', async (req, res) => {

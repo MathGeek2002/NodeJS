@@ -28,3 +28,39 @@ p {
 label {
     padding-left: 2px;
 }
+
+.centeredForm {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: 0;
+    right: 0;
+    width: 90%;
+    height: 75%;
+    background: white;
+    visibility: hidden;
+    border: 3px solid #7ebb0c;
+} 
+
+.questionImage {
+    height: 275px;
+}
+
+.closeButton {
+    line-height: 12px;
+    width: 18px;
+    font-size: 8pt;
+    font-family: tahoma;
+    margin-top: 1px;
+    margin-right: 2px;
+    position:absolute;
+    top:0;
+    right:0;
+}
+
+.optionButton
+{
+    display: inline;
+    margin-right: 5px;
+}

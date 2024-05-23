@@ -6,7 +6,7 @@ html
 
     body
         form(action=`/questionsPublic/checkQuiz/${questionIndex}` method="post" enctype="multipart/form-data" id="form1" accept-charset="utf-8")
-            img(src=`/images/obraz_${question.id}.png`)
+            img(src=`${question.picture}`)
             br
             label(for="questionDescription") Pytanie: 
             div(name='questionDescription', id='questionDescription') #{question.description}
